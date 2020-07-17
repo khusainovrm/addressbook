@@ -1,46 +1,58 @@
 /* eslint-disable no-useless-catch */
-import firebase from 'firebase/app'
-import jwt from 'jsonwebtoken'
-
+import {localStorageTokenName} from '../../config/config'
 
 export default {
   actions: {
-    async login( {commit}, {email, password}){
+    async login({ commit }, { email, password }) {
       try {
-        const data = await fetch("http://localhost:3000/users/").then(response => response.json())
-        const currentUser = data.filter(user => user.email === email && user.password === password)
-        const token = jwt.sign(
-          { userId: currentUser[0].id },
-          process.env.VUE_APP_JWT,
-          { expiresIn: '1h' }
-        )
-        currentUser[0].token = token
-  
-        commit("login", {email, password})
-        return currentUser
+        const data = await fetch("http://localhost:3000/login/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8"
+          },
+          body: JSON.stringify({ email, password })
+        }).then(response => response.json())
+
+        if (data.token) {
+          localStorage.setItem(
+            localStorageTokenName,
+            JSON.stringify({ ...data, email })
+          )
+        }
+
+        if (!data.message) {
+          commit("setToken", data)
+          return data
+        } else {
+          throw new Error(data.message)
+        }
       } catch (e) {
-        commit("setError", e)
+        commit("setError", e);
       }
     },
-    async register ({commit, dispatch}, {email, password, name}) {
+    async register({ commit }, { email, password, name }) {
       try {
-        await firebase.auth().createUserWithEmailAndPassword(email, password)
-        const uid = await dispatch("getUid")
-        await firebase.database().ref(`users/${uid}/info/`).set({
-          name,
-          bill: 1000
-        })
+          const resp = await fetch("http://localhost:3000/register/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({ email, password, name })
+          }).then(response => response.json())
+
+          if (resp.token) {
+            localStorage.setItem(
+              localStorageTokenName,
+              JSON.stringify({ ...resp, email })
+            )
+          }
       } catch (e) {
         commit("setError", e)
-        throw e
+        throw e;
       }
     },
-    getUid () {
-      const user = firebase.auth().currentUser
-      return user ? user.uid : null
-    },
-    async logout({commit}) {
-      await firebase.auth().signOut()
+    async logout({ commit }) {
+      localStorage.removeItem(localStorageTokenName)
       commit("clearInfo")
     }
   }

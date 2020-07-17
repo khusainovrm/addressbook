@@ -69,8 +69,7 @@ export default {
   validations: {
     email: {required, email},
     password: {required, minLength: minLength(6)},
-    name: {required},
-    agree: {checked: v => v}
+    name: {required}
   },
   methods: {
     async onSubmit () {
@@ -79,17 +78,18 @@ export default {
         return
       }
 
-      const obj = {
+      const user = {
         email:this.email,
         password:this.password,
-        name: this.name}
+        name: this.name
+        }
          
-    try{
-      await this.$store.dispatch("register", obj)
-      this.$router.push("/")
-    } catch (e) {
-      console.log(e)
-    }
+      try{
+        await this.$store.dispatch("register", user)
+        this.$router.push("/")
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 

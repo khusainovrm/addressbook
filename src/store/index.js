@@ -1,38 +1,38 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import auth from '@/store/auth'
-import record from '@/store/record'
+import Vue from "vue";
+import Vuex from "vuex";
+import auth from "@/store/auth";
+import contacts from "@/store/contacts";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     error: null,
-    forTest: null
+    token: null
   },
   actions: {
-    async fetchCurrency () {
-      const key = process.env.VUE_APP_FIXER
-      const url = `http://data.fixer.io/api/latest?access_key=${key}&symbols=USD,EUR,RUB`
-      const res = await fetch(url)
-      return res.json()
-    }
+
   },
   mutations: {
-    setError (state,error){
-      state.error=error
+    setError(state, error) {
+      state.error = error;
     },
-     clearError (state) {
-       state.error = null
-     },
-     login(state,data){
-       state.forTest = {email: data.email, login: data.login}
-     }
+    clearError(state) {
+      state.error = null;
+    },
+    setToken(state, data) {
+      state.token = data.token
+    },
+    clearInfo(state){
+      state.token = null
+    }
   },
   getters: {
-    error: s => s.error
+    error: s => s.error,
+    token: s => s.token
   },
   modules: {
-    auth, record
+    auth,
+    contacts
   }
 })

@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "id": 1594921067035,
+      "name": "Rinat",
+      "email": "khusainovrm@yandex.ru",
+      "password": "123456",
+      "online": false
+    },
+    {
+      "id": 2,
+      "name": "Dinara",
+      "email": "din176@yandex.ru",
+      "password": "123456",
+      "online": false
+    }
+  ],
+  "contacts": [
+    { "id": "1", "name": "Dinara", "phone": "+79262142020", "userId": 1594921067035 },
+    { "id": "2", "name": "Aranid", "phone": "+79262142021", "userId": 1594921067035 },
+    { "id": "3", "name": "Rinat", "phone": "+79169162500", "userId": 2 },
+    { "id": "4", "name": "Tanir", "phone": "+79262142031", "userId": 2 }
+  ]
+}

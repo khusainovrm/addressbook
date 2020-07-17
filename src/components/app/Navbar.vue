@@ -12,14 +12,11 @@
               href="#"
               data-target="dropdown"
           >
-            "ИМЯ"
+            {{ name }}
             <i class="material-icons right">arrow_drop_down</i>
           </a>
 
           <ul id='dropdown' class='dropdown-content'>
-            <li>
-                <i class="material-icons">account_circle</i>Profile 
-            </li>
             <li class="divider" tabindex="-1"></li>
             <li>
               <a class="black-text" @click="logout">
@@ -38,16 +35,11 @@ import M from 'materialize-css'
 
 export default {
   data: () => ({
-    interval: null,
-
+    name: ""
   }),
   mounted () {
-       this.dropDown = M.Dropdown.init(this.$refs.dropDown)
-       this.interval =  setInterval(()=> {
-         this.date = new Date ()
-         }, 1000)
-  },
-  computed: {
+    this.dropDown = M.Dropdown.init(this.$refs.dropDown)
+    this.name = JSON.parse(localStorage.getItem("userToken")).name
   },
   methods: {
     async logout () {
@@ -56,7 +48,6 @@ export default {
     }
   },
   beforeDestroy () {
-    clearInterval(this.interval)
     if (this.dropDown && this.dropDown.destroy) {
       this.dropDown.destroy()
     }

@@ -2,8 +2,8 @@
   <div class="app-main-layout" >
     <Navbar @click="isOpen=!isOpen"/>
 
-    <main class="app-content" :class="full">
-      <div class="app-page">
+    <main class="app-content full">
+      <div class="app-page center">
         <router-view/>
       </div>
     </main>
@@ -37,6 +37,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.center {
+  display: flex;
+  justify-content: center;
+}
 </style>
