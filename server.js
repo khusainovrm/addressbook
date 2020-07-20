@@ -1,36 +1,48 @@
-const fs = require("fs")
 const bodyParser = require("body-parser")
 const jsonServer = require("json-server")
 const jwt = require("jsonwebtoken")
 const bcrypt = require('bcrypt')
 const chalk = require('chalk')
-// const bcrypt = require('bcryptjs')
+
 
 const server = jsonServer.create()
 const router = jsonServer.router("./db.json")
-const config = require("./config/config")
+const {JWT_Secret, expiresIn} = require("./config/config")
 
 server.use(jsonServer.defaults())
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
 
+/*--------------START--------------*/
+const low = require('lowdb')
+const FileSync = require('./node_modules/lowdb/adapters/FileSync')
+const adapter = new FileSync('./db.json')
+const db = low(adapter)
+
+// Set some defaults (required if your JSON file is empty)
+db.defaults({ users: [], contacts: [] })
+  .write()
+
+/*--------------END--------------*/
+
 // Create a token from a payload
 function createToken(payload) {
-  return jwt.sign(payload, config.JWT_Secret, { expiresIn: config.expiresIn })
+  return jwt.sign(payload, JWT_Secret, { expiresIn: expiresIn })
 }
 
 // Verify the token
 function verifyToken(token) {
-  return jwt.verify(token, config.JWT_Secret, (err, decode) => decode !== undefined ? decode : err
+  return jwt.verify(token, JWT_Secret, (err, decode) => decode !== undefined ? decode : err
   )
 }
 
 // api for /login
 server.post("/login", async (req, res) => {
   const { email, password } = req.body
-  const userdb = JSON.parse(fs.readFileSync("./db.json", "UTF-8"))
 
-  const candidate = userdb.users.find(user => user.email === email)
+  const candidate = db.get('users')
+  .find({ email })
+  .value()
 
   if (!candidate) {
     const status = 400
@@ -46,6 +58,7 @@ server.post("/login", async (req, res) => {
   }
 
   const token = createToken({ email, password })
+
   res.status(200).json({ token, userId: candidate.id, name: candidate.name })
 })
 
@@ -54,9 +67,10 @@ server.post("/login", async (req, res) => {
 server.post('/register', async (req, res) => {
   try {
     const {email, password, name} = req.body
-    const userdb = JSON.parse(fs.readFileSync("./db.json", "UTF-8"))
 
-    const candidate = await userdb.users.find(user => user.email === email)
+    const candidate = db.get('users')
+    .find({ email })
+    .value()
 
     if (candidate) {
       return res.status(400).json({ message: 'Такой пользователь уже существует' })
@@ -65,13 +79,15 @@ server.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12)
     const id = Date.now()
     const user = {name, email, password: hashedPassword, id}
-    userdb.users.push(user)
 
-    fs.writeFileSync("./db.json", JSON.stringify(userdb), "UTF-8")
+    db.get('users')
+    .push(user)
+    .write()
+
+    router.db.read('./db.json')
 
     const token = createToken({ email, password })
-    const currentUser = {token, userId:id,name }
-    
+    const currentUser = {token, userId:id, name }
 
     res.status(201).json({ ...currentUser })
 
@@ -82,6 +98,25 @@ server.post('/register', async (req, res) => {
 })
 
 
+
+
+// Переписан api, так как строенный endpoit в server-json перетирал новых созданных пользователей
+server.post('/contacts', async (req, res) => {
+  try {
+    const { name, phone, userId } = req.body
+    const newContact = { name, phone, userId }
+
+    const id = db.get('contacts').size().value()
+    db.get('contacts').push({...newContact, id}).write()
+    router.db.read('./db.json')
+
+    res.status(201).json({message: "Запись создана", contact : newContact })
+
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' })
+  }
+})
 
 // Защтиа роутов на наличие токена
 server.use(/^(?!\/register).*$/, (req, res, next) => {
@@ -105,6 +140,14 @@ server.use(/^(?!\/register).*$/, (req, res, next) => {
     next()
   }
 })
+
+// In this example, returned resources will be wrapped in a body property
+router.render = (req, res) => {
+  router.db.read('./db.json')
+  res.jsonp({
+    body: res.locals.data
+  })
+}
 
 server.use(router)
 

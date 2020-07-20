@@ -1,0 +1,72 @@
+{
+    "users": [
+      {
+        "name": "RinatOne",
+        "email": "khusainovrm@yandex.ru",
+        "password": "$2b$12$bxRvYhCTKAS8QqGhbRg2mOCvdpUhB4bETCK.jbTeMBDm2L09tc5j2",
+        "id": 1594976191855
+      },
+      {
+        "name": "Rinatik",
+        "email": "bestnat@gmail.com",
+        "password": "$2b$12$9S19YZAnVQ8Pt3g8SJKe3.otaWlAQ2joheV6eoo/3dNoHtSCdQvfS",
+        "id": 1595245110221
+      },
+      {
+        "name": "rinme",
+        "email": "rinme@yandex.ru",
+        "password": "$2b$12$v0g3D39fMGuYtBZxy4W5PeS2bJQKjXbhFydh931aFkD3aogMPmPM2",
+        "id": 1595245242828
+      },
+      {
+        "name": "oneYa",
+        "email": "1@ya.ru",
+        "password": "$2b$12$IMAkz3DyToz.Qi5EeuYxsegeyCM.17rcar/eQrUBxIqr1dgizmydC",
+        "id": 1595247796212
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Rinat",
+        "phone": "+4867294",
+        "userId": 1594976191855,
+        "id": "0"
+      },
+      {
+        "name": "Best",
+        "phone": "1",
+        "userId": 1594976191855,
+        "id": "1"
+      },
+      {
+        "name": "best2",
+        "phone": "2",
+        "userId": 1595245110221,
+        "id": "2"
+      },
+      {
+        "name": "rinme",
+        "phone": "321654987",
+        "userId": 1595245242828,
+        "id": "3"
+      },
+      {
+        "name": "din",
+        "phone": "21",
+        "userId": 1594976191855,
+        "id": "4"
+      },
+      {
+        "name": "3",
+        "phone": "3",
+        "userId": 1594976191855,
+        "id": "5"
+      },
+      {
+        "name": "oneya",
+        "phone": "7",
+        "userId": 1595247796212,
+        "id": "6"
+      }
+    ]
+  }

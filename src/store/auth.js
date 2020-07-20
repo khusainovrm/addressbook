@@ -47,6 +47,7 @@ export default {
             )
           }
       } catch (e) {
+        console.error(e)
         commit("setError", e)
         throw e;
       }

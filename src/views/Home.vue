@@ -53,14 +53,22 @@ export default {
   components: {
     Card, ModalWindow
   },
-  mounted () {},
   async created() {
-    const token = JSON.parse(localStorage.getItem("userToken"))
-    await this.$store.dispatch("fetchContacts", token)
+    try {
+      const token = JSON.parse(localStorage.getItem("userToken"))
+      await this.$store.dispatch("fetchContacts", token)
+    } catch (error) { 
+      console.error(error)
+    }
+
+    
   },
-  computed:{
-    contacts(){
-      return this.$store.getters.contacts
+  computed:  {
+    contacts: function () {
+      const c = this.$store.getters.contacts
+      console.log(c)  // TODO check
+      
+      return c
     }
   },
   methods: {

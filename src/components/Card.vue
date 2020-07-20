@@ -10,26 +10,48 @@
         class="card-content_name" 
         v-model="contact.name" 
         name="name"
+        ref="name"
+        readonly="readonly"
       >
       <input 
         type="text" 
         class="card-content_telephone" 
         v-model="contact.phone" 
+        ref="phone"
         name="phone"
+        readonly="readonly"
       >
     </div>
-    <div class="button remove" @click="removeContact">
+    <div 
+      class="button remove" 
+      @click="removeContact"
+    >
       <i class="material-icons">delete</i>
     </div>
-        <div class="button edit">
+    <div 
+      class="button edit" 
+      @click="editContact"
+    >
       <i class="material-icons">create</i>
     </div>
+
+    <div 
+      v-if="edit"
+      class="button edit done" 
+      @click="saveChanges"
+    >
+      <i class="material-icons">done</i>
+    </div>
+    
   </li>
 </template>
 
 <script>
 export default {
   name: "Card",
+  data:() => ({
+    edit: false
+  }),
   props: {
     contact: {
       type: Object, required: true
@@ -46,6 +68,30 @@ export default {
         console.error(error)
       }
 
+    },
+    editContact(){
+      this.edit = true
+      const name = this.$refs.name
+      const phone = this.$refs.phone
+      name.removeAttribute("readonly")
+      phone.removeAttribute("readonly")
+      // name.setAttribute("readonly", "editable")
+    },
+    saveChanges(){
+      const name = this.$refs.name
+      const phone = this.$refs.phone
+      try {
+        const token = JSON.parse(localStorage.getItem("userToken")).token
+        const contact = {...this.contact, token }
+        this.$store.dispatch("saveChanges", contact )
+
+      } catch (error) {
+        console.log(error)
+      }
+
+      name.setAttribute("readonly", "editable")
+      phone.setAttribute("readonly", "editable")
+      this.edit = false
     }
   }
 }
@@ -84,6 +130,9 @@ li{
 }
 .edit{
   top:24px;
+}
+.done {
+  top: 48px;
 }
 .button.edit :hover{
  color:green;

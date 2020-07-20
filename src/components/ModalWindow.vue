@@ -2,7 +2,11 @@
   <div class="modalWindow" >
     <div class="formContainer" data-modal="true">
       <h3 data-modal="true">Создание контакта</h3>
-      <form @submit.prevent="onSubmit" method="post" data-modal="true">
+      <form 
+        @submit.prevent="onSubmit" 
+        method="post" 
+        data-modal="true"
+      >
         <input
           type="text"
           placeholder="Имя"
