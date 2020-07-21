@@ -1,7 +1,6 @@
 {
   "name": "addressbook",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
   "scripts": {
     "start": "concurrently \"npm run json\" \"npm run serve\"",
     "serve": "vue-cli-service serve",
@@ -9,6 +8,12 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "keywords": [
+    "vue",
+    "json-server"
+  ],
+  "author": "Rinat Khusainov <khusainovrm@yandex.ru>",
+  "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
@@ -20,7 +25,6 @@
     "lodash": "^4.17.19",
     "lowdb": "^1.0.0",
     "materialize-css": "^1.0.0",
-    "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-router": "^3.1.6",
