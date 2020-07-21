@@ -1,41 +1,48 @@
 <template>
-<div @click="checkModal"> 
+<div> 
   <div class="page-title">
 
     <h3>{{'Адресная книжка'}}</h3>
 
     <button 
-      class="btn waves-effect waves-light btn-small" 
+      class="btn btn-small" 
       @click="openModalWindow=true" 
-      data-modal="true"
     >
       <i class="material-icons" data-modal="true">add</i>
     </button>
   </div>
 
-  <div class="row">
-    <input 
-      type="text" 
-      placeholder="Поиск..." 
-      class="col" 
-      name="search"
-      v-model="search"
+  <div v-if="contacts.length">
+    <div class="row">
+      <input 
+        type="text" 
+        placeholder="Поиск..." 
+        class="col" 
+        name="search"
+        v-model="search"
+      >
+      <div class="card"></div>
+    </div>
+    <div 
+      class="searchWrapper"
+      v-if='filtredContacts.length'
     >
-    <div class="card"></div>
+     <transition-group name="list" tag="p">
+      <Card 
+        v-for="contact of filtredContacts"
+        :contact="contact"
+        :key="contact.id"
+      />
+       </transition-group>
+    </div>
+     <p v-else >nothing found</p>
   </div>
-
-  <div v-if="contacts">
-    <Card 
-      v-for="contact of contacts"
-      :contact="contact"
-      :key="contact.id"
-    />
-  </div>
-  <p v-else @click="openModalWindow=true">no contacts here, create new one</p>
+  <p v-else @click="openModalWindow=true">У вас еще нет ни одного контакта, создайте новый!</p>
 
   <ModalWindow 
     v-if="openModalWindow"
     @createContact="createContact"
+    @cancel="cancel"
   />
 </div>
 </template>
@@ -58,17 +65,32 @@ export default {
       const token = JSON.parse(localStorage.getItem("userToken"))
       await this.$store.dispatch("fetchContacts", token)
     } catch (error) { 
-      console.error(error)
+      this.$message(error)
+      if (error.message){
+        await this.$store.dispatch("logout")
+        this.$router.push('/login?message=logout')
+      }
     }
-
-    
   },
   computed:  {
-    contacts: function () {
-      const c = this.$store.getters.contacts
-      console.log(c)  // TODO check
-      
-      return c
+    contacts () {
+      return this.$store.getters.contacts
+    },
+    filtredContacts () {
+      const contacts = this.$store.getters.contacts.filter(contact => {
+        let search = this.search.trim().toLowerCase()
+        search = search.replace(/[+()-]+/g, '')
+        const phone = contact.phone.replace(/[+()-]+/g, '').toLowerCase()
+        const name = contact.name.replace(/[+()-]+/g, '').toLowerCase()
+
+        const isPhoneFound = phone.includes(search)
+        const isNameFound = name.includes(search)
+
+        if (isPhoneFound || isNameFound) {
+          return true
+        }
+      })
+      return contacts
     }
   },
   methods: {
@@ -76,24 +98,30 @@ export default {
       this.openModalWindow = false
       this.$store.dispatch("createContact", data)
     },
-    checkModal (e) {
-      const isModalOpened = (e.target.dataset.modal === "true")
-      if (!isModalOpened) {
-        this.openModalWindow = false
-      }
-    }
-  },
-  watch:{
-    search(){
-      const filter = Object.keys(this.contacts).map(contact => {
-        console.log(contact)
-        if (this.contacts[contact].phone.includes("7")) {
-          
-          return contact
-        }
-      })
-      console.log(filter)
+    cancel(){
+      this.openModalWindow = false
     }
   }
 }
 </script>
+<style scoped>
+.btn{
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+}
+.page-title {
+  width: 350px;
+}
+
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+
+.list-move {
+  transition: transform 1s
+}
+
+</style>

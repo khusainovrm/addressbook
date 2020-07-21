@@ -13,7 +13,7 @@ server.use(jsonServer.defaults())
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
 
-/*--------------START--------------*/
+/*--------------START-LOWDB---------*/
 const low = require('lowdb')
 const FileSync = require('./node_modules/lowdb/adapters/FileSync')
 const adapter = new FileSync('./db.json')
@@ -22,19 +22,20 @@ const db = low(adapter)
 // Set some defaults (required if your JSON file is empty)
 db.defaults({ users: [], contacts: [] })
   .write()
-
 /*--------------END--------------*/
+
 
 // Create a token from a payload
 function createToken(payload) {
   return jwt.sign(payload, JWT_Secret, { expiresIn: expiresIn })
 }
-
 // Verify the token
 function verifyToken(token) {
   return jwt.verify(token, JWT_Secret, (err, decode) => decode !== undefined ? decode : err
   )
 }
+
+
 
 // api for /login
 server.post("/login", async (req, res) => {
@@ -46,14 +47,14 @@ server.post("/login", async (req, res) => {
 
   if (!candidate) {
     const status = 400
-    const message = "User is not found"
+    const message = "Пользователь не найден"
     return res.status(status).json({status, message})
   }
 
   const isMatch = await bcrypt.compare(password, candidate.password)
   if (!isMatch) {
     const status = 400
-    const message = "Wrong password"
+    const message = "Неправильный пароль"
     return res.status(status).json({status, message})
   }
 
@@ -98,25 +99,42 @@ server.post('/register', async (req, res) => {
 })
 
 
-
-
-// Переписан api, так как строенный endpoit в server-json перетирал новых созданных пользователей
+// POST - add contact
 server.post('/contacts', async (req, res) => {
   try {
     const { name, phone, userId } = req.body
-    const newContact = { name, phone, userId }
+    const id = Date.now()
+    const contact = { name, phone, userId, id }
 
-    const id = db.get('contacts').size().value()
-    db.get('contacts').push({...newContact, id}).write()
+    db.get('contacts').push(contact).write()
     router.db.read('./db.json')
 
-    res.status(201).json({message: "Запись создана", contact : newContact })
+    res.status(201).json({message: "Запись создана", contact : contact })
 
   } catch (e) {
     console.log(e)
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' })
   }
 })
+
+// DELETE - delete contact
+server.delete('/contacts/:id', async (req, res) => {
+  try {
+
+    db.get('contacts')
+    .remove({ id: +req.params.id })
+    .write()
+
+    router.db.read('./db.json')
+    res.status(201).json({message: "Запись удалена" })
+    
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' })
+  }
+})
+
+
 
 // Защтиа роутов на наличие токена
 server.use(/^(?!\/register).*$/, (req, res, next) => {
@@ -152,5 +170,5 @@ router.render = (req, res) => {
 server.use(router)
 
 server.listen(3000, () => {
-  console.log(chalk.green("Json Server has been started..."))
+  console.log(chalk.green("JSON-SERVER has been started..."))
 })

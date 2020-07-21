@@ -1,4 +1,4 @@
-export const requestData = (url, method = 'GET', body = null, headers = {}) => {
+export const requestData = (url, method = 'GET',  headers = {}, body = {}) => {
   if (body) {
     body = JSON.stringify(body)
     headers['Content-Type'] = 'application/json'

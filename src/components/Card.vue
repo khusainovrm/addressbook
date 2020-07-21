@@ -1,5 +1,8 @@
 <template>
-  <li class="card main">
+    <li 
+    class="card main" 
+    :class="{editCard:this.edit}"
+  >
     <div class="card-info">
       <div class="card-info_name card-content_name">Имя: </div>
       <div class="card-info_telephone">Телефон: </div>
@@ -22,27 +25,29 @@
         readonly="readonly"
       >
     </div>
-    <div 
-      class="button remove" 
-      @click="removeContact"
-    >
-      <i class="material-icons">delete</i>
-    </div>
-    <div 
-      class="button edit" 
-      @click="editContact"
-    >
-      <i class="material-icons">create</i>
-    </div>
+    <div class="button-wrapper">
+      <div 
+        class="button remove" 
+        @click="removeContact"
+      >
+        <i class="material-icons">delete</i>
+      </div>
 
-    <div 
-      v-if="edit"
-      class="button edit done" 
-      @click="saveChanges"
-    >
-      <i class="material-icons">done</i>
+      <div 
+        class="button edit" 
+        @click="editContact"
+      >
+        <i class="material-icons">format_italic</i>
+      </div>
+
+      <div 
+        v-if="edit"
+        class="button edit done" 
+        @click="saveChanges"
+      >
+        <i class="material-icons">save</i>
+      </div>
     </div>
-    
   </li>
 </template>
 
@@ -63,16 +68,15 @@ export default {
         const token = JSON.parse(localStorage.getItem("userToken")).token
         const data = { token, id: this.contact.id }
         await this.$store.dispatch("removeContact", data)
-        console.log("remove contact", data)
       } catch (error) {
         console.error(error)
       }
-
     },
     editContact(){
       this.edit = true
       const name = this.$refs.name
       const phone = this.$refs.phone
+      name.focus()
       name.removeAttribute("readonly")
       phone.removeAttribute("readonly")
       // name.setAttribute("readonly", "editable")
@@ -98,11 +102,11 @@ export default {
 </script>
 
 <style scoped>
-.card{
+.card {
   position: relative;
   padding: 15px;
   border: 1px solid #ccc;
-  width: 300px;
+  width: 350px;
   display: grid;
   grid-template-columns: 35% 65%;
   align-items: center;
@@ -117,13 +121,16 @@ export default {
   flex-direction: column;
   justify-content: space-evenly;
 }
+
 li{
   list-style: none;
 }
+
 .button{
   position: absolute;;
   right: 0px;
   padding: 2px;
+  color: lightgrey;
 }
 .remove{
   top:0px;
@@ -133,15 +140,29 @@ li{
 }
 .done {
   top: 48px;
+  animation: blink 2s linear infinite;
 }
+@keyframes blink {
+  0% { color: white; }
+  50% { color: green; }
+  100% { color: white; }
+}
+
 .button.edit :hover{
  color:green;
  cursor:pointer;
 }
 
 .button.remove :hover{
- color:red;
+ color:red!important;
  cursor:pointer;
+}
+input{
+  color: black!important;
+}
+.editCard{
+  box-shadow: 4px 4px 10px #888;
+  transition: box-shadow .3s;
 }
 
 </style>>

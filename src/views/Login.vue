@@ -69,7 +69,7 @@
 
 <script>
 import { email, required, minLength } from "vuelidate/lib/validators";
-import messages from "@/utils/message";
+
 
 export default {
   name: "login",
@@ -96,13 +96,14 @@ export default {
         this.$router.push("/")
         // eslint-disable-next-line no-empty
       } catch (e) {
-        this.$store.commit("setError", e);
+        this.$message(e)
+        this.$store.commit("setError", e)
       }
     }
   },
   mounted() {
-    if (this.$route.query.message in messages)
-      this.$message(messages[this.$route.query.message]);
+    if (this.$route.query.message)
+      this.$message(this.$route.query.message);
   }
 };
 </script>

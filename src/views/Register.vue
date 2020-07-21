@@ -87,8 +87,9 @@ export default {
       try{
         await this.$store.dispatch("register", user)
         this.$router.push("/")
+      // eslint-disable-next-line no-empty
       } catch (e) {
-        console.log(e)
+
       }
     }
   }

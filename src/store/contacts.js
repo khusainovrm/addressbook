@@ -9,15 +9,15 @@ export default {
     async createContact({commit}, {name, phone, userId, token} ){
       try {
         const url = "http://localhost:3000/contacts"
-        const response = await fetch(url, { 
+        const contact = await fetch(url, { 
           method: "POST", 
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token },
           body: JSON.stringify({ name, phone, userId })
         }).then(res => res.json())
-
-        commit("createContact", response )
+        
+        commit("createContact", contact.contact )
       } catch (error) {
         commit("setError", error)
         throw error
@@ -53,7 +53,7 @@ export default {
             body: JSON.stringify({ name, phone, userId })
         }).then(res => res.json())
 
-        commit("saveChanges", contactFromServer)
+        commit("saveChanges", contactFromServer.body)
 
       } catch (error) {
         commit("setError", error)
@@ -83,7 +83,7 @@ export default {
     }
   },
   mutations: {
-    createContact(state, { contact }) {
+    createContact(state, contact ) {
       state.contacts.push(contact)
     },
     removeContact(state,id){

@@ -27,7 +27,7 @@ export default {
           throw new Error(data.message)
         }
       } catch (e) {
-        commit("setError", e);
+        commit("setError", e)
       }
     },
     async register({ commit }, { email, password, name }) {
@@ -46,10 +46,13 @@ export default {
               JSON.stringify({ ...resp, email })
             )
           }
+
+          if (resp.message) {
+            throw new Error(resp.message)
+          }
       } catch (e) {
-        console.error(e)
         commit("setError", e)
-        throw e;
+        throw e
       }
     },
     async logout({ commit }) {

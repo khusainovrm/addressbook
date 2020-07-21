@@ -1,45 +1,58 @@
 <template>
   <div class="modalWindow" >
     <div class="formContainer" data-modal="true">
-      <h3 data-modal="true">Создание контакта</h3>
+      <h3>Создание контакта</h3>
       <form 
         @submit.prevent="onSubmit" 
-        method="post" 
-        data-modal="true"
+        method="post"
       >
         <input
           type="text"
           placeholder="Имя"
           name="name"
-          data-modal="true"
           v-model="name"
-          required
+          :class="{invalid:(!$v.name.required && $v.name.$dirty)}"
         >
+        <small v-if="!$v.name.required && $v.name.$dirty" class="helper-text invalid">Поле "Имя" не должно быть пустым</small>
+        
         <input
           type="tel"
           placeholder="Телефон"
           name="phone"
           v-model="phone"
-          data-modal="true"
           pattern="[+]?[0-9]+"
-          required
+          :class="{invalid:(!$v.phone.required && $v.phone.$dirty)}"
         >
-        <br data-modal="true">
-        <button class="btn" type="submit" data-modal="true">Создать</button>
+        <small v-if="!$v.phone.required && $v.phone.$dirty" class="helper-text invalid">Поле "Телефон" не должно быть пустым</small>
+        <br>
+        <button class="btn" type="submit">Создать</button>
+        <button class="btn" @click="cancel">Отмена</button>
       </form>
     </div>
   </div>
 </template>
 
 <script>
+import { required } from 'vuelidate/lib/validators'
+
 export default {
   name: "ModalWindow",
   data: () => ({
     name: "",
     phone: ""
   }),
+   validations: {
+    name: {required},
+    phone: {required},
+
+  },
   methods: {
     onSubmit () {
+       if (this.$v.$invalid) {
+        this.$v.$touch()
+        return
+      }
+
       const localData = JSON.parse(localStorage.getItem("userToken"))
       const contact = { 
         name: this.name, 
@@ -49,6 +62,10 @@ export default {
         }
       this.$emit("createContact", contact)
     },
+    cancel (e) {
+      e.preventDefault()
+      this.$emit("cancel")
+    }
   }
 }
 </script>
@@ -57,11 +74,10 @@ export default {
 .modalWindow{
   position: absolute;
   max-width: 100%;
-  height: 100%;
+  height: 100vh;
   top: 0px;
   right: 0px;
   left: 0px;
-  bottom: 0px;
   display: flex;
   justify-content: center;
   overflow-x: hidden;
@@ -72,7 +88,7 @@ export default {
   position: relative;
   top: 100px;
   width: 400px;
-  height: 70vh;
+  height: 50vh;
   padding: 20px;
   border: 1px solid #cccccc;
   box-shadow: 3px 3px 10px black;
@@ -83,6 +99,10 @@ input{
 }
 button {
   margin-top: 20px;
+}
+
+.btn {
+  margin-right: 10px;
 }
 
 </style>
