@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Navbar from "@/components/app/Navbar.vue"
+import Navbar from "@/components/Navbar.vue"
 
 
 export default {

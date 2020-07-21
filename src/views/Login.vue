@@ -97,13 +97,12 @@ export default {
         // eslint-disable-next-line no-empty
       } catch (e) {
         this.$message(e)
-        this.$store.commit("setError", e)
       }
     }
   },
   mounted() {
-    if (this.$route.query.message)
-      this.$message(this.$route.query.message);
+    if (this.$route.query.message === 'logout')
+      this.$message("Вы вышли из системы");
   }
 };
 </script>

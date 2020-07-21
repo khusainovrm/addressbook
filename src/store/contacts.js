@@ -2,8 +2,7 @@
 
 export default {
   state: {
-    contacts: [],
-    contact: []
+    contacts: []
   },
   actions: {
     async createContact({commit}, {name, phone, userId, token} ){
@@ -103,7 +102,6 @@ export default {
     }
   },
   getters: {
-    contacts: s => s.contacts,
-    contact: s => s.contact
+    contacts: s => s.contacts
   }
 }

@@ -18,10 +18,6 @@ export default {
             localStorageTokenName,
             JSON.stringify({ ...data, email })
           )
-        }
-
-        if (!data.message) {
-          commit("setToken", data)
           return data
         } else {
           throw new Error(data.message)
@@ -57,7 +53,7 @@ export default {
     },
     async logout({ commit }) {
       localStorage.removeItem(localStorageTokenName)
-      commit("clearInfo")
+      commit("clearError")
     }
   }
 }

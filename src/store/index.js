@@ -7,11 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    error: null,
-    token: null
-  },
-  actions: {
-
+    error: null
   },
   mutations: {
     setError(state, error) {
@@ -19,17 +15,10 @@ export default new Vuex.Store({
     },
     clearError(state) {
       state.error = null;
-    },
-    setToken(state, data) {
-      state.token = data.token
-    },
-    clearInfo(state){
-      state.token = null
     }
   },
   getters: {
-    error: s => s.error,
-    token: s => s.token
+    error: s => s.error
   },
   modules: {
     auth,
