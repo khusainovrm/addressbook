@@ -8,7 +8,7 @@
       class="btn btn-small" 
       @click="openModalWindow=true" 
     >
-      <i class="material-icons" data-modal="true">add</i>
+      <i class="material-icons">add</i>
     </button>
   </div>
 
@@ -27,7 +27,7 @@
       class="searchWrapper"
       v-if='filtredContacts.length'
     >
-     <transition-group name="list" tag="p">
+     <transition-group name="list">
       <Card 
         v-for="contact of filtredContacts"
         :contact="contact"
@@ -35,7 +35,7 @@
       />
        </transition-group>
     </div>
-     <p v-else >nothing found</p>
+     <p v-else >Ничего не найдено...</p>
   </div>
   <p v-else @click="openModalWindow=true">У вас еще нет ни одного контакта, создайте новый!</p>
 
@@ -43,6 +43,8 @@
     v-if="openModalWindow"
     @createContact="createContact"
     @cancel="cancel"
+    @after-enter="filtredContacts"
+    @after-leave="filtredContacts"
   />
 </div>
 </template>
@@ -116,12 +118,18 @@ export default {
   width: 350px;
 }
 
-.list-enter-active, .list-leave-active {
-  transition: all 1s;
+.list-enter-active, 
+.list-leave-active {
+  transition: all .3s;
+}
+.list-enter,
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.2);
 }
 
 .list-move {
-  transition: transform 1s
+  transition: opacity .3s
 }
 
 </style>

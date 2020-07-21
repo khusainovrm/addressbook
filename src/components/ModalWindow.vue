@@ -1,6 +1,6 @@
 <template>
   <div class="modalWindow" >
-    <div class="formContainer" data-modal="true">
+    <div class="formContainer">
       <h3>Создание контакта</h3>
       <form 
         @submit.prevent="onSubmit" 

@@ -55,6 +55,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+nav {
+  position: fixed;
+}
+</style> >
 
-</style>
